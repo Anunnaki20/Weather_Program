@@ -1,5 +1,8 @@
 import json
 import datetime as DT
+import pytz
+eastern = pytz.timezone('US/Eastern')
+
 
 def read_weather():
     temp1 = {}
@@ -41,11 +44,9 @@ def read_weather():
 # x = read_weather()
 # print(x[0])     # Prints temp1
 # print(x[2])
-# y= DT.datetime.utcfromtimestamp(x[2][1][0])
-# time = f"{y:%H}"
-# time = int(time)
+# y= DT.datetime.utcfromtimestamp(1593633600)
+# time = int(f"{y:%H}")
 # print(time)
-
 
 def read_time(adict):
     """
@@ -56,12 +57,16 @@ def read_time(adict):
     linenum = 1
     temp_time = dict()
     for i in adict:
+        hour = list()
         for j in range(len(adict[i])):
-            utctime = DT.datetime.utcfromtimestamp(adict[i][j])
-            hour = int(f"{utctime:%H}")-4  # Converts to the EST time zone by subtracting 4 hours form the UTC time zone
+            utctime = DT.datetime.fromtimestamp(adict[i][j],eastern)
+            # Gets date and time from POSIX sets time zone to eastern
             temp_time[linenum] = hour
+            hour.append(int(f"{utctime:%H}"))  # Grabs just the hour in 24 hour format
+        linenum += 1
     return temp_time
 
-adict = {1:[1593633600]}
-x = read_time(adict)
-print(x[1])
+x = read_weather()
+print(len(x[2][1]))
+y = read_time(x[2])
+print(y[1])
