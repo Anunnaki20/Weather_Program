@@ -38,15 +38,8 @@ def read_weather():
 # and [] is a list of 48 temperatures
 # print(temp1[1])   # for hour 1
 # print(temp1[800]) # for hour 800
-#
 # print(temp2)
 
-# x = read_weather()
-# print(x[0])     # Prints temp1
-# print(x[2])
-# y= DT.datetime.utcfromtimestamp(1593633600)
-# time = int(f"{y:%H}")
-# print(time)
 
 def read_time(adict):
     """
@@ -66,7 +59,3 @@ def read_time(adict):
         linenum += 1
     return temp_time
 
-x = read_weather()
-print(len(x[2][1]))
-y = read_time(x[2])
-print(y[1])
