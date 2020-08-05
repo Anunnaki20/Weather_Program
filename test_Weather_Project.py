@@ -1,7 +1,7 @@
 import datetime as DT
 import readcsv as RC
 from Data_format import time_and_temp
-
+from Data_format import actual_temp
 
 def str_form(obj, result, expected, reason):
     """
@@ -110,7 +110,49 @@ def test_9():
                9:[24,24], 10:[26,25], 11:[27,26], 12:[28,26], 13:[29,26], 14:[29,27], 15:[30,27], 16:[27,30], 17:[27,29]
                 , 18:[26,28], 19:[25,28], 20:[24,26], 21:[22,24], 22:[20,23], 23:[19, 21]}
     result = time_and_temp(temp_dict, time_dict)
+    assert result == expected, str_form(objective, result, expected, reason)
+
+
+def test_10():
+    objective = "time_and_temp()"
+    reason = "The function is not working correctly"
+    x = RC.read_weather()
+    time_dict = RC.read_time(x[2])
+    temp_dict = x[0]
+    expected = time_and_temp(temp_dict, time_dict)
+    result = time_and_temp(temp_dict, time_dict)
     print(result)
+    assert result == expected, str_form(objective, result, expected, reason)
+
+
+# Testing the actual_temp() in the Data_format file
+def test_11():
+    objective = "actual_temp()"
+    reason = "The function is not getting the time and temp properly"
+    time_dict = {1: [9, 10, 11, 12]}
+    temp_dict = {1: [12, 16, 24, 21]}
+    expected = {1: [9, 12]}
+    result = actual_temp(temp_dict, time_dict)
+    assert result == expected, str_form(objective, result, expected, reason)
+
+
+def test_12():
+    objective = "actual_temp()"
+    reason = "The function is not getting the time and temp properly"
+    time_dict = {1: [9, 10, 11, 12], 2: [23, 0, 1]}
+    temp_dict = {1: [12, 16, 24, 21], 2: [20, 21, 42]}
+    expected = {1: [9, 12], 2: [23, 20]}
+    result = actual_temp(temp_dict, time_dict)
+    assert result == expected, str_form(objective, result, expected, reason)
+
+
+def test_13():
+    objective = "actual_temp()"
+    reason = "The function is not getting the time and temp properly"
+    time_dict = {3: [9, 10, 11, 12], 1: [23, 0, 1]}
+    temp_dict = {1: [12, 16, 24, 21], 3: [20, 21, 42]}
+    expected = {1: [23, 12], 3: [9, 20]}
+    result = actual_temp(temp_dict, time_dict)
     assert result == expected, str_form(objective, result, expected, reason)
 
 

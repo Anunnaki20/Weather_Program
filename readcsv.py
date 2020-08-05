@@ -8,7 +8,7 @@ def read_weather():
     temp1 = {}
     temp2 = {}
     time = {}
-    with open('24_hours.txt', 'r') as f:
+    with open('forecast.txt', 'r') as f:
         linenum = 1
         fl = f.readlines()
         #print(fl[0])
