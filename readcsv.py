@@ -8,7 +8,7 @@ def read_weather():
     temp1 = {}
     temp2 = {}
     time = {}
-    with open('1_line.txt', 'r') as f:
+    with open('24_hours.txt', 'r') as f:
         linenum = 1
         fl = f.readlines()
         #print(fl[0])
@@ -54,9 +54,9 @@ def read_time(adict):
         linenum += 1
     return temp_time
 
-x = read_weather()
-print("TEMPS")
-print(x[0])
-y = read_time(x[2])
-print("TIME")
-print(y)
+# x = read_weather()
+# print("TEMPS")
+# print(x[0])
+# y = read_time(x[2])
+# print("TIME")
+# print(y)

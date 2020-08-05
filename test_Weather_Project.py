@@ -110,6 +110,7 @@ def test_9():
                9:[24,24], 10:[26,25], 11:[27,26], 12:[28,26], 13:[29,26], 14:[29,27], 15:[30,27], 16:[27,30], 17:[27,29]
                 , 18:[26,28], 19:[25,28], 20:[24,26], 21:[22,24], 22:[20,23], 23:[19, 21]}
     result = time_and_temp(temp_dict, time_dict)
+    print(result)
     assert result == expected, str_form(objective, result, expected, reason)
 
 
