@@ -10,22 +10,27 @@ def time_and_temp(temp_dict, time_dict):
     """
     assert len(temp_dict) == len(time_dict), "The dictionary's must be the same size"
     compared_temps = dict()
+    alist = list()
     for i in time_dict:
         time_stamp = 0
-        alist = list()
-        while time_stamp < 24:  # loops through ever hour in the day.
+        while time_stamp < 24:  # loops through all times in a day
             time_list = time_dict[i]
             temp_list = temp_dict[i]
             index = [g for g, h in enumerate(time_list) if h == time_stamp]
-            for y in index:
-                alist.append(temp_list[y])
-            compared_temps[time_stamp] = alist
+            if len(index) == 0:
+                time_stamp += 1
+            else:
+                for y in index:
+                    alist.append(temp_list[y])
+                try:
+                    compared_temps[time_stamp].extend(alist)
+                except KeyError:
+                    compared_temps[time_stamp] = alist
+                time_stamp += 1
+            alist = list()
     return compared_temps
 
 
-temp_dict = {1: [23, 21, 26]}
-time_dict = {1: [0, 3, 0]}
-print(time_and_temp(temp_dict, time_dict))
 
 
 
