@@ -33,6 +33,7 @@ def actual_temp(temp_dict, time_dict):
     The purpose is to get the actual temp for all 808 readings.
     e.g. temp_dict = {1:[23, 25, 28, 22]} time_dict = {1:[14,15,16,17]}
     It would return {1:[14, 23]} as at 14:00 hours 23 is the most accurate temperature
+    the 1 being the line form the file it was read from
     :param temp_dict: A dictionary of a list of temperatures
     :param time_dict: A dictionary of a list of times
     :return: A dictionary with the time and most accurate temp
