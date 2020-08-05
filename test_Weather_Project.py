@@ -18,6 +18,7 @@ def str_form(obj, result, expected, reason):
     """
     return 'Test fault for {}.  Returned <{}>, expected <{}>.  Reason: "{}"'.format(obj, result, expected, reason)
 
+
 # Testing read_time function
 def test_1():
     objective = "read_time()"
@@ -37,6 +38,7 @@ def test_2():
     expected = [16,17]
     assert result[1] == expected, str_form(objective, result, expected, reason)
 
+
 def test_3():
     objective = "read_time()"
     reason = "The function is not converting the time correctly, check the math"
@@ -44,6 +46,7 @@ def test_3():
     result = RC.read_time(adict)
     expected = [16, 17, 18, 19, 20]
     assert result[1] == expected, str_form(objective, result, expected, reason)
+
 
 def test_4():
     objective = "read_time()"

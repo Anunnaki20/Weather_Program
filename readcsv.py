@@ -30,7 +30,7 @@ def read_weather():
             linenum += 1
             temp2[datadict['responseTime']] = datadict['temperature']
 
-    return temp1, temp2, time
+    return temp1, temp2, time   # temp1 and time are the same size
 
 # so now we have a dictonary in the format
 # { 1: [23, 21, ... 24], 2: [20, 19, ... 17], ... 800: [26, 27, ... 25]}
@@ -59,3 +59,7 @@ def read_time(adict):
         linenum += 1
     return temp_time
 
+x = read_weather()
+print(len(x[0]))
+y = read_time(x[2])
+print(len(y))
