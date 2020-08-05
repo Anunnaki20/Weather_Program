@@ -1,4 +1,3 @@
-import readcsv as RC
 
 
 def time_and_temp(temp_dict, time_dict):
@@ -11,16 +10,16 @@ def time_and_temp(temp_dict, time_dict):
     assert len(temp_dict) == len(time_dict), "The dictionary's must be the same size"
     compared_temps = dict()
     alist = list()
-    for i in time_dict:
+    for i in time_dict: # loops through the values in the dictionary
         time_stamp = 0
         while time_stamp < 24:  # loops through all times in a day
             time_list = time_dict[i]
             temp_list = temp_dict[i]
-            index = [g for g, h in enumerate(time_list) if h == time_stamp]
+            index = [g for g, h in enumerate(time_list) if h == time_stamp]  # gets the index of the time values
             if len(index) == 0:
                 time_stamp += 1
             else:
-                for y in index:
+                for y in index:     # Uses the indexes of the time values to add the temps to the dictionary
                     alist.append(temp_list[y])
                 try:
                     compared_temps[time_stamp].extend(alist)

@@ -89,3 +89,27 @@ def test_7():
     assert result == expected, str_form(objective, result, expected, reason)
 
 
+def test_8():
+    objective = "time_and_temp()"
+    reason = "The function is not adding the temps to the lists correctly"
+    time_dict = {1: [1, 5, 1], 2: [5, 23, 1]}
+    temp_dict = {1: [24, 30, 25], 2: [28, 15, 13]}
+    expected = {1: [24, 25, 13], 5: [30, 28], 23: [15]}
+    result = time_and_temp(temp_dict, time_dict)
+    assert result == expected, str_form(objective, result, expected, reason)
+
+
+def test_9():
+    objective = "time_and_temp()"
+    reason = "The function is not adding the temps to the lists correctly"
+    time_dict = {1: [16, 17, 18, 19, 20, 21, 22, 23, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
+                     19, 20, 21, 22, 23, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]}
+    temp_dict = {1: [27, 27, 26, 25, 24, 22, 20, 19, 19, 18, 18, 17, 17, 17, 17, 18, 21, 24, 26, 27, 28, 29, 29, 30, 30,
+                     29, 28, 28, 26, 24, 23, 21, 21, 20, 20, 19, 19, 18, 19, 20, 22, 24, 25, 26, 26, 26, 27, 27]}
+    expected = {0:[19,21], 1:[18,20], 2:[18,20], 3:[17,19], 4:[17,19], 5:[17,18], 6:[17,19], 7:[18,20], 8:[21,22],
+               9:[24,24], 10:[26,25], 11:[27,26], 12:[28,26], 13:[29,26], 14:[29,27], 15:[30,27], 16:[27,30], 17:[27,29]
+                , 18:[26,28], 19:[25,28], 20:[24,26], 21:[22,24], 22:[20,23], 23:[19, 21]}
+    result = time_and_temp(temp_dict, time_dict)
+    assert result == expected, str_form(objective, result, expected, reason)
+
+

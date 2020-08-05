@@ -8,28 +8,23 @@ def read_weather():
     temp1 = {}
     temp2 = {}
     time = {}
-
-    with open('forecast.txt', 'r') as f:
+    with open('1_line.txt', 'r') as f:
         linenum = 1
         fl = f.readlines()
         #print(fl[0])
-
         for line in fl:
             # parse out the number and the comma
             data = line.split('{')
             jsondata = "{" + data[1].strip()
             #print(jsondata)
-
             # convert to dictionary for this hours data
             datadict = json.loads(jsondata)
             #print(datadict['temperature'])
-
             # store the temperature data for this hour, all 48 values, in a new dict
             temp1[linenum] = datadict['temperature']
             time[linenum] = datadict['validTimeUtc']
             linenum += 1
             temp2[datadict['responseTime']] = datadict['temperature']
-
     return temp1, temp2, time   # temp1 and time are the same size
 
 # so now we have a dictonary in the format
@@ -60,6 +55,8 @@ def read_time(adict):
     return temp_time
 
 x = read_weather()
-print(len(x[0]))
+print("TEMPS")
+print(x[0])
 y = read_time(x[2])
-print(len(y))
+print("TIME")
+print(y)
