@@ -41,10 +41,13 @@ def actual_temp(temp_dict, time_dict):
     """
     assert len(temp_dict) == len(time_dict), "The dictionary's must be the same size"
     actual_temp_dict = dict()
+    time_temp_list = list()
     for i in time_dict:
         time_list = time_dict[i]
         temp_list = temp_dict[i]
-        actual_temp_dict[time_list[0]] = temp_list[0]
+        time_temp_list.append(time_list[0])
+        time_temp_list.append(temp_list[0])
+        actual_temp_dict[i] = time_temp_list
     return actual_temp_dict
 
 
