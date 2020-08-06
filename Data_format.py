@@ -1,3 +1,8 @@
+import pandas as pd
+import numpy as np
+import readcsv as RC
+
+
 def time_and_temp(temp_dict, time_dict):
     """
     The purpose is to combine all temps that correspond with their time.
@@ -53,7 +58,7 @@ def actual_temp(temp_dict, time_dict):
 
 def day_temps(compared_temps, time_of_day, period):
     """
-    To organize the data for each hour into 24 hour data
+    To organize the data for each hour into avg,min,max for what period you select hour data
     :param compared_temps: The dictionary of compared temps from the time and temp function
     :param time_of_day: The time of day ranging from 0-23
     :param period: The time period of temp values you want.
@@ -87,6 +92,59 @@ def day_temps(compared_temps, time_of_day, period):
     return volatility_hour
 
 
+def temp_dataframe():
+    """
+    The purpose is to put the data into a single panda data frame
+    :return: The data frame with all the data organized
+    """
+    dataframe_dict = {}
+    cache = dict()
+    axis_index = list()     # Will become the lines in the left column
+    actual_temp_list = list()
+    average_list = list()
+    min_list = list()
+    max_list = list()
+    time_of_data = list()
+    all_data = RC.read_weather()
+    all_time_data = RC.read_time(all_data[2])
+    compared_temps = time_and_temp(all_data[0], all_time_data)
+    act_dict = actual_temp(all_data[0], all_time_data)
+    period = 24
+    count = 1
+    while count < period:      # Used add 0 to the
+        average_list.append(0)
+        min_list.append(0)
+        max_list.append(0)
+        count += 1
+    for i in act_dict:  # puts the data into the actual temp list
+        axis_index.append(i)
+        act_temp_time_list = act_dict[i]
+        actual_temp_list.append(act_temp_time_list[1])
+        time_of_data.append(act_temp_time_list[0])
+        cache[act_temp_time_list[0]] = 0
+    for i in act_dict:
+        act_temp_time_list = act_dict[i]
+        time = act_temp_time_list[0]
+        cache[time] += 1
+        day_temps_dict = day_temps(compared_temps, time, period)
+        day = cache[time]
+        day_dict = day_temps_dict[day]
+        average_list.append(day_dict['avg'])
+        min_list.append(day_dict['min'])
+        max_list.append(day_dict['max'])
+    dataframe_dict['Time'] = time_of_data
+    dataframe_dict['Act Temp'] = actual_temp_list
+    dataframe_dict['Avg'] = average_list[:808]
+    dataframe_dict['Min'] = min_list[:808]
+    dataframe_dict['Max'] = max_list[:808]
+    dataframe = pd.DataFrame(dataframe_dict, axis_index)
+    return dataframe
+
+
+# x = temp_dataframe()
+# with pd.option_context('display.max_rows', None, 'display.max_columns', None):  # more options can be specified also
+#     print(x)
+# print(x.head(100))
 # atest = {0:[1,2,5,5,8,23,3,3,37,23,24,26,7,6,23,6,57,5,2,34,12,9999,23,21,23,22,1,24,34,1,23,35,46,1,23,15,4,21,3,35,34,23,524,61,34,25,1,2,7,3,2,5,9,6,34,2,2,6,8,94,4]}
 # print(day_temps(atest,0,24))
 # 9999 is the 24th hour
