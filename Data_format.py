@@ -1,23 +1,22 @@
 import pandas as pd
-import numpy as np
 import readcsv as RC
 
 
-def time_and_temp(temp_dict, time_dict):
+def time_and_temp(weather_data_dict, time_dict):
     """
     The purpose is to combine all temps that correspond with their time.
-    :param temp_dict: A dictionary of temperatures
+    :param weather_data_dict: A dictionary of temperatures
     :param time_dict: A dictionary of times in which each temp in the temp_dict correspond to
     :return: A dictionary with the hour being the keys and a list of temps that go with that hour being the values
     """
-    assert len(temp_dict) == len(time_dict), "The dictionary's must be the same size"
+    assert len(weather_data_dict) == len(time_dict), "The dictionary's must be the same size"
     compared_temps = dict()
     alist = list()
     for i in time_dict:  # loops through the values in the dictionary
         time_stamp = 0
         while time_stamp < 24:  # loops through all times in a day
             time_list = time_dict[i]
-            temp_list = temp_dict[i]
+            temp_list = weather_data_dict[i]
             index = [g for g, h in enumerate(time_list) if h == time_stamp]  # gets the index of the time values
             if len(index) == 0:
                 time_stamp += 1
@@ -33,22 +32,22 @@ def time_and_temp(temp_dict, time_dict):
     return compared_temps
 
 
-def actual_temp(temp_dict, time_dict):
+def actual_temp(weather_data_dict, time_dict):
     """
-    The purpose is to get the actual temp for all 808 readings.
+    The purpose is to get the actual weather data for all 808 readings.
     e.g. temp_dict = {1:[23, 25, 28, 22]} time_dict = {1:[14,15,16,17]}
     It would return {1:[14, 23]} as at 14:00 hours 23 is the most accurate temperature
     the 1 being the line form the file it was read from
-    :param temp_dict: A dictionary of a list of temperatures
+    :param weather_data_dict: A dictionary of a list of temperatures
     :param time_dict: A dictionary of a list of times
     :return: A dictionary with the time and most accurate temp
     """
-    assert len(temp_dict) == len(time_dict), "The dictionary's must be the same size"
+    assert len(weather_data_dict) == len(time_dict), "The dictionary's must be the same size"
     actual_temp_dict = dict()
     time_temp_list = list()
     for i in time_dict:
         time_list = time_dict[i]
-        temp_list = temp_dict[i]
+        temp_list = weather_data_dict[i]
         time_temp_list.append(time_list[0])
         time_temp_list.append(temp_list[0])
         actual_temp_dict[i] = time_temp_list
@@ -97,21 +96,22 @@ def temp_dataframe():
     The purpose is to put the data into a single panda data frame
     :return: The data frame with all the data organized
     """
-    dataframe_dict = {}
-    cache = dict()
+    dataframe_dict = {}     # The dictionary that will be used to make the data frame
+    day_cache = dict()  # Caches what day we are getting the avg,min,max data
+    day_temps_cache = dict()        # Cache of the dictionary calculated from the day temp function
     axis_index = list()     # Will become the lines in the left column
     actual_temp_list = list()
     average_list = list()
     min_list = list()
     max_list = list()
     time_of_data = list()
-    all_data = RC.read_weather()
+    all_data = RC.read_weather()    # All of the data that is read from the read_weather function in readcsv file
     all_time_data = RC.read_time(all_data[2])
     compared_temps = time_and_temp(all_data[0], all_time_data)
     act_dict = actual_temp(all_data[0], all_time_data)
-    period = 24
+    period = 24     # The amount of time that we will take for the avg,min,max values for the day_temps function
     count = 1
-    while count < period:      # Used add 0 to the
+    while count < period:      # Used add 0 to the beginning when no avg,min,max data can be calculated
         average_list.append(0)
         min_list.append(0)
         max_list.append(0)
@@ -121,13 +121,17 @@ def temp_dataframe():
         act_temp_time_list = act_dict[i]
         actual_temp_list.append(act_temp_time_list[1])
         time_of_data.append(act_temp_time_list[0])
-        cache[act_temp_time_list[0]] = 0
+        day_cache[act_temp_time_list[0]] = 0
+        day_temps_cache[act_temp_time_list[0]] = 0
     for i in act_dict:
         act_temp_time_list = act_dict[i]
         time = act_temp_time_list[0]
-        cache[time] += 1
-        day_temps_dict = day_temps(compared_temps, time, period)
-        day = cache[time]
+        day_cache[time] += 1
+        if day_temps_cache[time] == 0:
+            day_temps_dict = day_temps(compared_temps, time, period)
+            day_temps_cache[time] = day_temps_dict
+        day = day_cache[time]
+        day_temps_dict = day_temps_cache[time]
         day_dict = day_temps_dict[day]
         average_list.append(day_dict['avg'])
         min_list.append(day_dict['min'])
@@ -141,9 +145,9 @@ def temp_dataframe():
     return dataframe
 
 
-# x = temp_dataframe()
-# with pd.option_context('display.max_rows', None, 'display.max_columns', None):  # more options can be specified also
-#     print(x)
+x = temp_dataframe()
+with pd.option_context('display.max_rows', None, 'display.max_columns', None):  # more options can be specified also
+    print(x)
 # print(x.head(100))
 # atest = {0:[1,2,5,5,8,23,3,3,37,23,24,26,7,6,23,6,57,5,2,34,12,9999,23,21,23,22,1,24,34,1,23,35,46,1,23,15,4,21,3,35,34,23,524,61,34,25,1,2,7,3,2,5,9,6,34,2,2,6,8,94,4]}
 # print(day_temps(atest,0,24))

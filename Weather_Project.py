@@ -24,11 +24,13 @@ def plotting_pred_vs_act():
         count += 1
     pred_temp_xaxis.append(period)
     pred_cache = dict()
+    day_temps_cache = dict()
     for i in act_dict:  # pust the data into the actual temp axis's
         act_temp_xaxis.append(i)
         act_temp_time_list = act_dict[i]
         act_temp_yaxis.append(act_temp_time_list[1])
         pred_cache[act_temp_time_list[0]] = 0
+        day_temps_cache[act_temp_time_list[0]] = 0
         if i > period:
             pred_temp_xaxis.append(i)
     for i in act_dict:      # loop used to data into the pred temp axis's
@@ -36,7 +38,10 @@ def plotting_pred_vs_act():
         act_temp_time_list = act_dict[i]    # Uses the time value from the actual data
         time = act_temp_time_list[0]
         pred_cache[time] += 1
-        pred_dict = DF.day_temps(compared_temps, time, period)  # calls the day temps to get a dict with avg values
+        if day_temps_cache[time] == 0:
+            pred_dict = DF.day_temps(compared_temps, time, period)  # calls the day temps to get a dict with avg values
+            day_temps_cache[time] = pred_dict
+        pred_dict = day_temps_cache[time]
         value = pred_cache[time]    # gets the day number from the cache
         pred_average = pred_dict[value]     # Gets the dictionary from the day key
         average.append(pred_average['avg'])     # puts the average value in a list
