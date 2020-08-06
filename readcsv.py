@@ -28,7 +28,7 @@ def read_weather():
             temp2[datadict['responseTime']] = datadict['temperature']
     return temp1, temp2, time   # temp1 and time are the same size
 
-# so now we have a dictonary in the format
+# so now we have a dictionary in the format
 # { 1: [23, 21, ... 24], 2: [20, 19, ... 17], ... 800: [26, 27, ... 25]}
 # Where 1: is a label for the hour
 # and [] is a list of 48 temperatures

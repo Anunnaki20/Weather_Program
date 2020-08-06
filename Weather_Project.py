@@ -3,59 +3,23 @@ import matplotlib.pyplot as plt
 import Data_format as DF
 
 
-def plotting_pred_vs_act():
+def plotting_temp():
     """
-    To plot the actual temperature value and the predicted value (avg value) on the same graph
+    To plot the temperature data
     :return: None
     """
-    all_data = RC.read_weather()
-    all_time_data = RC.read_time(all_data[2])
-    compared_temps = DF.time_and_temp(all_data[0],all_time_data)
-    act_dict = DF.actual_temp(all_data[0], all_time_data)
-    period = 48 #int(input("Enter the time period that we will use for the predicted graph: "))
-    act_temp_xaxis = list()
-    act_temp_yaxis = list()
-    pred_temp_yaxis = list()
-    pred_temp_xaxis = []
-    count = 1
-    while count < period:      # Used to make the pred axis's equal dimensions
-        pred_temp_xaxis.append(count)
-        pred_temp_yaxis.append(0)
-        count += 1
-    pred_temp_xaxis.append(period)
-    pred_cache = dict()
-    day_temps_cache = dict()
-    for i in act_dict:  # pust the data into the actual temp axis's
-        act_temp_xaxis.append(i)
-        act_temp_time_list = act_dict[i]
-        act_temp_yaxis.append(act_temp_time_list[1])
-        pred_cache[act_temp_time_list[0]] = 0
-        day_temps_cache[act_temp_time_list[0]] = 0
-        if i > period:
-            pred_temp_xaxis.append(i)
-    for i in act_dict:      # loop used to data into the pred temp axis's
-        average = list()
-        act_temp_time_list = act_dict[i]    # Uses the time value from the actual data
-        time = act_temp_time_list[0]
-        pred_cache[time] += 1
-        if day_temps_cache[time] == 0:
-            pred_dict = DF.day_temps(compared_temps, time, period)  # calls the day temps to get a dict with avg values
-            day_temps_cache[time] = pred_dict
-        pred_dict = day_temps_cache[time]
-        value = pred_cache[time]    # gets the day number from the cache
-        pred_average = pred_dict[value]     # Gets the dictionary from the day key
-        average.append(pred_average['avg'])     # puts the average value in a list
-        pred_temp_yaxis.append(average[0])     # adds the average to the pred y-axis
-    pred_temp_yaxis = pred_temp_yaxis[:808]
-    plt.plot(act_temp_xaxis, act_temp_yaxis)    # Plotting the actual temp values
-    plt.plot(pred_temp_xaxis, pred_temp_yaxis)  # Plotting the pred temp values
-    plt.legend(["Actual Temperature","Predicted Temperature"])
+    period = int(input("Enter the period will use to Predict future temperatures: "))
+    df = DF.temp_dataframe(period)
+    avg_frame = df[df['Avg'] > 0]   # Gets only the data frame if it is greater than 0
+    avg = avg_frame.iloc[:, 2]      # Gets only the average data of the data frame that is greater than 0
+    df.plot(y = 'Act Temp')
+    plt.plot(avg)
+    plt.legend(["Actual Temperature", "Predicted Temperature Using"+str(period)+"Hours"])
     plt.title("Temperature readings over a whole month")
     plt.xlabel("Readings")
     plt.ylabel("Temperature (°C)")
     plt.show()
 
 
-plotting_pred_vs_act()
-
-
+if __name__ == '__main__':
+    plotting_temp()
