@@ -2,7 +2,7 @@ import datetime as DT
 import readcsv as RC
 from Data_format import time_and_temp
 from Data_format import actual_temp
-from Data_format import day_temps
+from Data_format import day_values
 
 def str_form(obj, result, expected, reason):
     """
@@ -165,7 +165,7 @@ def test_14():
     time_of_day = 0
     period = 5
     expected = {1: {'max': 6, 'min': 1, 'avg':(sum(compared_temps[0][0:5])/5)}, 2:{'max': 11, 'min':7, 'avg':(sum(compared_temps[0][5:10])/5)}}
-    result = day_temps(compared_temps,time_of_day,period)
+    result = day_values(compared_temps, time_of_day, period)
     assert result == expected, str_form(objective, result, expected, reason)
 
 
@@ -176,6 +176,6 @@ def test_15():
     time_of_day = 2
     period = 2
     expected = {1: {'max': 6, 'min': 3, 'avg': 4.5}}
-    result = day_temps(compared_temps,time_of_day,period)
+    result = day_values(compared_temps, time_of_day, period)
     assert result == expected, str_form(objective, result, expected, reason)
 
