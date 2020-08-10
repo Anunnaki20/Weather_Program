@@ -64,32 +64,40 @@ def day_temps(compared_values, hour, period):
     :return: A dictionary with each day being the key and a another dictionary with avg, min, and max values
     """
     assert hour < 24, "The time must be from 0-23"
-    assert period <= 48, "The time period must be less than 48"
+    assert period == 48 or period == 24, "The time period must be less than 48"
     assert type(hour) is type(int()), "The time of day must be an integer"
     assert type(period) is type(int()), "The period must be an integer"
     volatility = dict()
     volatility_hour = dict()
-    start_day = 1   # Not zero as that is the temp for the current hour
-    end_day = period+1
+    temps_24_hour = list()
     days = 1
-    temp_list = compared_values[hour]    # Gets the list of temperatures for the hour
-    amount_temps = len(temp_list)
-    while amount_temps != 0:
-        if period > amount_temps:   # Prevents a error were one_day becomes an empty list
-            one_day = temp_list[start_day-1:]
-        else:
-            one_day = temp_list[start_day:end_day]
-        max_temp = max(one_day)
-        min_temp = min(one_day)
-        average_temp = sum(one_day) / len(one_day)
+    temp_list = compared_values[hour]
+    time_frame = 48
+    temp_list = temp_list[1:]  # Gets the list of temperatures for the hour excludes the most accurate temp
+    while len(temp_list) > 0:
+        if len(temp_list) < time_frame:
+            break
+        if period == 24:
+            temps_24_hour.append(temp_list.pop(0))
+            test_step_24 = temp_list[0:time_frame - 1:2]
+            test_step_48 = temp_list[1:time_frame - 1:2]
+            temps_24_hour.extend(temp_list[:time_frame - 1:2])
+            max_temp = max(temps_24_hour)    # Gets only the values that correspond to 24hrs in the future
+            min_temp = min(temps_24_hour)
+            average_temp = sum(temps_24_hour) / len(temps_24_hour)
+        elif period == 48:
+            temp_list.pop(0)
+            temps_48_hour = temp_list[1:time_frame - 1:2]
+            max_temp = max(temps_48_hour)    # Gets only the values that correspond to 24hrs in the future
+            min_temp = min(temps_48_hour)
+            average_temp = sum(temps_48_hour) / len(temps_48_hour)
         volatility["max"] = max_temp
         volatility["min"] = min_temp
         volatility["avg"] = average_temp
         volatility_hour[days] = volatility  # puts the dictionary max,min,avg dictionary in another dictionary
+        temps_24_hour = list()
         volatility = dict()
-        start_day += period
-        end_day += period
-        amount_temps -= len(one_day)
+        temp_list = temp_list[time_frame-1:]
         days += 1
     return volatility_hour
 
@@ -102,7 +110,7 @@ def temp_dataframe(period):
     """
     dataframe_dict = {}     # The dictionary that will be used to make the data frame
     day_cache = dict()  # Caches what day we are getting the avg,min,max data
-    day_value_cache = dict()        # Cache of the dictionary calculated from the day temp function
+    volatility_hour_cache = dict()        # Cache of the dictionary calculated from the day temp function
     axis_index = list()     # Will become the lines in the left column
     actual_value_list = list()  # A list of the most accurate value
     average_list = list()   # A list of the average values over the period of time selected
@@ -114,7 +122,7 @@ def temp_dataframe(period):
     compared_values = time_and_temp(all_data[0], all_time_data)
     act_dict = actual_temp(all_data[0], all_time_data)
     count = 1
-    while count < period:      # Used add 0 to the beginning when no avg,min,max data can be calculated
+    while count <= period:      # Used add 0 to the beginning when no avg,min,max data can be calculated
         average_list.append(0)
         min_list.append(0)
         max_list.append(0)
@@ -125,20 +133,25 @@ def temp_dataframe(period):
         actual_value_list.append(act_value_time_list[1])
         time_of_data.append(act_value_time_list[0])
         day_cache[act_value_time_list[0]] = 0    # initiates the caches
-        day_value_cache[act_value_time_list[0]] = 0
+        volatility_hour_cache[act_value_time_list[0]] = 0
     for i in act_dict:  # Loop for putting the avg,min,max data into lists to then by put in the data frame dictionary
         act_value_time_list = act_dict[i]
         time = act_value_time_list[0]
         day_cache[time] += 1
-        if day_value_cache[time] == 0:  # Checks to make sure the day_temp function has not been called for that hour
-            day_value_dict = day_temps(compared_values, time, period)
-            day_value_cache[time] = day_value_dict
+        if volatility_hour_cache[time] == 0:    # Checks to make sure the day_temp function has not been called for that hour
+            volatility_dict = day_temps(compared_values, time, period)
+            volatility_hour_cache[time] = volatility_dict
         day = day_cache[time]   # Gets the day from the day_cache for use in getting the avg,min,max
-        day_value_dict = day_value_cache[time]
-        day_dict = day_value_dict[day]
-        average_list.append(day_dict['avg'])
-        min_list.append(day_dict['min'])
-        max_list.append(day_dict['max'])
+        volatility_dict = volatility_hour_cache[time]
+        if day <= len(volatility_dict):
+            volatility_value_dict = volatility_dict[day]
+            average_list.append(volatility_value_dict['avg'])
+            min_list.append(volatility_value_dict['min'])
+            max_list.append(volatility_value_dict['max'])
+        else:
+            break
+        if i == 427:
+            pass
     dataframe_dict['Time'] = time_of_data
     dataframe_dict['Act Temp'] = actual_value_list
     dataframe_dict['Avg'] = average_list[:len(time_of_data)]
@@ -148,7 +161,7 @@ def temp_dataframe(period):
     return dataframe
 
 
-# x = temp_dataframe()
-# with pd.option_context('display.max_rows', None, 'display.max_columns', None):  # more options can be specified also
-#     print(x)
+x = temp_dataframe(24)
+with pd.option_context('display.max_rows', None, 'display.max_columns', None):  # more options can be specified also
+    print(x)
 # print(x.iloc[:,4])
