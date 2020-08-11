@@ -65,7 +65,7 @@ def volatility(sorted_dict, period):
         # Creates the volatility lists with as many 0 as we have period. As we do not have the data for any time before
         # the period.
         multi = 1
-        if period == 48:
+        if period == 48 and time != 1:
             multi = 2
         avg_list = [0] * multi
         max_list = [0] * multi

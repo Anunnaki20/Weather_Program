@@ -11,7 +11,6 @@ def plotting_temp():
     df = DF.data_frame(period)
     avg_frame = df['Avg']   # Gets only the data frame if it is greater than 0
     avg_frame = avg_frame[period:]
-    print(avg_frame)
     df.plot(y='Actual Temp')
     plt.plot(avg_frame)
     plt.legend(["Actual Temperature", "Predicted Temperature Using "+str(period)+" Hours"])
@@ -27,7 +26,7 @@ def plotting_temp():
     # df.plot(y='Act Temp')
     plt.plot(min_temp)
     plt.plot(max_temp)
-    plt.legend(["Actual Temperature " + str(period) + " Hours", "Minimum Temperature", "Maximum Temperature Using"])
+    plt.legend(["Minimum Temperature", "Maximum Temperature Using"])
     plt.title("Max And Min temperatures over a whole month")
     plt.xlabel("Readings")
     plt.ylabel("Temperature (°C)")
@@ -36,6 +35,7 @@ def plotting_temp():
     actual_temps = df['Actual Temp']
     actual_temps = actual_temps[period:]
     plt.plot((actual_temps - avg_frame))
+    plt.legend(['Accuracy of the Predicted temperature'])
     plt.title("Temperature readings over a whole month")
     plt.xlabel("Readings")
     plt.ylabel("Temperature (°C)")
