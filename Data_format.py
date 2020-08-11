@@ -99,7 +99,7 @@ def day_temps(compared_values, hour, period):
         temp_list = temp_list[time_frame - 1:]
         # moves the temp_list by 48 values. Does not include the most accurate temp
         days += 1
-    return volatility_hour
+    return volatility_hour  # GIVES THE WRONG AVG,MIN,MAX DUE TO THE SHIFT IN 24 hr VALUES IN THE ORIGINAL TEMP LIST
 
 
 def temp_dataframe(period):
