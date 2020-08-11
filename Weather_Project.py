@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-import Data_format as DF
+import Data_Format_New as DF
 
 
 def plotting_temp():
@@ -8,11 +8,11 @@ def plotting_temp():
     :return: None
     """
     period = int(input("Enter the period will use to Predict future temperatures: "))
-    df = DF.temp_dataframe(period)
+    df = DF.data_frame(period)
     avg_frame = df['Avg']   # Gets only the data frame if it is greater than 0
     avg_frame = avg_frame[period:]
     print(avg_frame)
-    df.plot(y='Act Temp')
+    df.plot(y='Actual Temp')
     plt.plot(avg_frame)
     plt.legend(["Actual Temperature", "Predicted Temperature Using "+str(period)+" Hours"])
     plt.title("Temperature readings over a whole month")
@@ -33,7 +33,7 @@ def plotting_temp():
     plt.ylabel("Temperature (°C)")
     plt.show()
 
-    actual_temps = df['Act Temp']
+    actual_temps = df['Actual Temp']
     actual_temps = actual_temps[period:]
     plt.plot((actual_temps - avg_frame))
     plt.title("Temperature readings over a whole month")

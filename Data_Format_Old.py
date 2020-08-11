@@ -161,7 +161,7 @@ def temp_dataframe(period):
     return dataframe
 
 
-x = temp_dataframe(48)
-with pd.option_context('display.max_rows', None, 'display.max_columns', None):  # more options can be specified also
-    print(x)
+# x = temp_dataframe(48)
+# with pd.option_context('display.max_rows', None, 'display.max_columns', None):  # more options can be specified also
+#     print(x)
 # print(x.iloc[:,4])

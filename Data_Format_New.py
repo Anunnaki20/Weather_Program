@@ -59,38 +59,45 @@ def volatility(sorted_dict, period):
     To find the average, min, max of the data using either 24 or 48 hours.
     :param sorted_dict: A sorted dictionary with the 24hr list and the 48hr list
     :param period: The period of time you want to use for the min,max,avg. Either 24 or 48
-    :return: The sorted_dict with a new key value pairs of 'Avg','Min','Max' for each hour
+    :return: None
     """
     for time in sorted_dict:
         # Creates the volatility lists with as many 0 as we have period. As we do not have the data for any time before
-        #  the period.
-        avg_list = [0] * period
-        max_list = [0] * period
-        min_list = [0] * period
-        temporarily_list = []
-        if time == 16:
-            x = "testing only"
-        # If using 48 hours then it values from the 48 hour temps list
-        if period == 24:
-            data = sorted_dict[time]['24 hr temps']
+        # the period.
+        multi = 1
         if period == 48:
-            data = sorted_dict[time]['48 hr temps']
+            multi = 2
+        avg_list = [0] * multi
+        max_list = [0] * multi
+        min_list = [0] * multi
+        temporarily_list = []
+        # Checks on which data to access from the sorted_dict
+        if period == 24:
+            data = sorted_dict[time]['24 hr temps']  # Gets the all data from the 24 hours
+            copy = sorted_dict[time]['24 hr temps'].copy()  # Copy's the 24 data
+        if period == 48:
+            data = sorted_dict[time]['48 hr temps']  # Gets the all data from the 48 hours
+            copy = sorted_dict[time]['48 hr temps'].copy()  # Copy's the 48 data
         while len(data) != 0:
-            if len(data) <= 24:
-                temporarily_list = data
-                break
+            if len(data) <= 24:  # Checks to make sure it can pop 24 values into the temporarily list
+                temporarily_list = data  # If it can't pop 24 values then it assigns the values to temporarily list
+                break   # Breaks the while loop so it can find the min, max, avg from the remaining values
             else:
-                for i in range(0, 24):
+                for i in range(0, 24):  # pops in 24 values from the data list
                     value = data.pop(0)
-                    temporarily_list.append(value)
-            min_list.append(min(temporarily_list))
-            max_list.append(max(temporarily_list))
+                    temporarily_list.append(value)  # Adds the value to the temporarily list
+            min_list.append(min(temporarily_list))  # Finds the min value and adds it to the min list
+            max_list.append(max(temporarily_list))  # Finds the max value and adds it to the max list
+            # Finds the avg value and adds it to the avg list
             avg_list.append((sum(temporarily_list) / len(temporarily_list)))
-            temporarily_list = []
-            sorted_dict[time]['Avg'] = avg_list
-            sorted_dict[time]['Min'] = min_list
-            sorted_dict[time]['Max'] = max_list
-    return sorted_dict
+            temporarily_list = []   # Resets the temporarily list
+            sorted_dict[time]['Avg'] = avg_list  # Adds the avg list to a key value pair in the sorted dict
+            sorted_dict[time]['Min'] = min_list  # Adds the min list to a key value pair in the sorted dict
+            sorted_dict[time]['Max'] = max_list  # Adds the max list to a key value pair in the sorted dict
+        if period == 24:
+            sorted_dict[time]['24 hr temps'] = copy  # Places the 24 hour list back
+        if period == 48:
+            sorted_dict[time]['48 hr temps'] = copy  # Places the 48 hour list back
 
 
 def data_frame(period):
@@ -102,13 +109,23 @@ def data_frame(period):
     all_data = RC.read_weather()  # All of the data that is read from the read_weather function in readcsv file
     all_time_data = RC.read_time(all_data[2])  # Gets the time data and puts it in 24 hour format
     sorted_dict = sorted_data(all_data[0], all_time_data)
-    volatility_data = volatility(sorted_dict, period)
-    dataframe_dict = {}  # The dictionary that will be used to make the data frame
+    volatility(sorted_dict, period)
+    # The dictionary that will be used to make the data frame
+    dataframe_dict = {'Time': [], 'Actual Temp': [], 'Avg': [], 'Min': [], 'Max': []}
     axis_index = list()  # Will become the lines in the left column
-    for i in all_data:
-        axis_index.append(i)
+    for line in all_time_data:  # Loops through every line from the file
+        axis_index.append(line)  # Puts the number of lines in a list. in ascending order
+        time = all_time_data[line][0]   # Finds the first time values from each line
+        volatility_data = sorted_dict[time]
+        dataframe_dict['Time'].append(time)  # Adds the first time in each line into a list
+        dataframe_dict['Actual Temp'].append(volatility_data['Act'].pop(0))
+        dataframe_dict['Avg'].append(volatility_data['Avg'].pop(0))
+        dataframe_dict['Min'].append(volatility_data['Min'].pop(0))
+        dataframe_dict['Max'].append(volatility_data['Max'].pop(0))
+    dataframe = pd.DataFrame(dataframe_dict, axis_index)
+    return dataframe
 
 
-
-x = data_frame(24)
-
+x = data_frame(48)
+with pd.option_context('display.max_rows', None, 'display.max_columns', None):  # more options can be specified also
+    print(x)

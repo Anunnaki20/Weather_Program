@@ -1,8 +1,8 @@
 import datetime as DT
 import readcsv as RC
-from Data_format import time_and_temp
-from Data_format import actual_temp
-from Data_format import day_temps
+from Data_Format_Old import time_and_temp
+from Data_Format_Old import actual_temp
+from Data_Format_Old import day_temps
 
 def str_form(obj, result, expected, reason):
     """
