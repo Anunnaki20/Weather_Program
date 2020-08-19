@@ -9,6 +9,8 @@ def read_weather():
     temp1 = {}
     temp2 = {}
     time = {}
+    press = {}
+    humidity = {}
     with open('forecast.txt', 'r') as f:
         linenum = 1
         fl = f.readlines()
@@ -24,9 +26,11 @@ def read_weather():
             # store the temperature data for this hour, all 48 values, in a new dict
             temp1[linenum] = datadict['temperature']
             time[linenum] = datadict['validTimeUtc']
+            press[linenum] = datadict['pressureMeanSeaLevel']
+            humidity[linenum] = datadict['relativeHumidity']
             linenum += 1
             temp2[datadict['responseTime']] = datadict['temperature']
-    return temp1, temp2, time   # temp1 and time are the same size
+    return temp1, temp2, time, press, humidity   # temp1 and time are the same size
 
 # so now we have a dictionary in the format
 # { 1: [23, 21, ... 24], 2: [20, 19, ... 17], ... 800: [26, 27, ... 25]}
@@ -56,8 +60,8 @@ def read_time(adict):
     return temp_time
 
 # x = read_weather()
-# print("TEMPS")
-# print(x[0])
+# print("Pressure")
+# print(x[3])
 # y = read_time(x[2])
 # print("TIME")
 # print(y)
