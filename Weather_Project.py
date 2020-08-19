@@ -9,36 +9,30 @@ def plotting_temp():
     """
     period = int(input("Enter the period will use to Predict future temperatures: "))
     df = DF.data_frame(period)
-    avg_frame = df['Avg']   # Gets only the data frame if it is greater than 0
-    avg_frame = avg_frame[period:]
-    df.plot(y='Actual Temp')
-    plt.plot(avg_frame)
-    plt.legend(["Actual Temperature", "Predicted Temperature Using "+str(period)+" Hours"])
-    plt.title("Temperature readings over a whole month")
-    plt.xlabel("Readings")
-    plt.ylabel("Temperature (°C)")
-    plt.show()
 
-    min_temp = df['Min']
-    min_temp = min_temp[period:]
-    max_temp = df['Max']
-    max_temp = max_temp[period:]
-    # df.plot(y='Act Temp')
-    plt.plot(min_temp)
-    plt.plot(max_temp)
-    plt.legend(["Minimum Temperature", "Maximum Temperature Using"])
-    plt.title("Max And Min temperatures over a whole month")
-    plt.xlabel("Readings")
-    plt.ylabel("Temperature (°C)")
-    plt.show()
+    # First Sub plot
+    fig, axes = plt.subplots(nrows = 3, ncols = 1, figsize=(15,10))
+    df.plot(y="Actual Temp",ax=axes[0])
+    df['Avg'][period:].plot(ax=axes[0])
+    axes[0].set_title("Temperature readings over a whole month")
+    axes[0].set_xlabel("Readings")
+    axes[0].set_ylabel("Temperature (°C)")
+    axes[0].legend(["Actual Temperature", "Predicted Temperature Using " + str(period) + " Hours"])
 
-    actual_temps = df['Actual Temp']
-    actual_temps = actual_temps[period:]
-    plt.plot((actual_temps - avg_frame))
-    plt.legend(['Accuracy of the Predicted temperature'])
-    plt.title("Temperature readings over a whole month")
-    plt.xlabel("Readings")
-    plt.ylabel("Temperature (°C)")
+    # Second Sub plot
+    df['Min'][period:].plot(ax=axes[1])
+    df['Max'][period:].plot(ax=axes[1])
+    axes[1].legend(["Minimum Temperature", "Maximum Temperature Using"])
+    axes[1].set_title("Max And Min temperatures over a whole month")
+    axes[1].set_xlabel("Readings")
+    axes[1].set_ylabel("Temperature (°C)")
+
+    # Third Sub plot
+    plt.plot((df['Actual Temp'][period:] - df['Avg'][period:]))
+    axes[2].legend(['Accuracy of the Predicted temperature'])
+    axes[2].set_title("Temperature readings over a whole month")
+    axes[2].set_xlabel("Readings")
+    axes[2].set_ylabel("Temperature (°C)")
     plt.show()
 
 

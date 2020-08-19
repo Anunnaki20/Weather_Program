@@ -24,7 +24,7 @@ def sorted_data(weather_data_dict, time_dict):
             index = [g for g, h in enumerate(time_list) if h == time_stamp]
             # Gets the index in the time_list for the given time.
             if len(index) == 0:  # Checks to make sure that the list is of indexes is not empty. Prevents errors
-                time_stamp += 1
+                time_stamp += 1  # If it can not find the time value it ups the time by 1
             if index[0] == 0:   # If the first index is 0 then it puts it in the appropriate lists
                 accurate_list.append(weather_list[index[0]])
                 hour_24.append(weather_list[index[1]])
@@ -126,6 +126,6 @@ def data_frame(period):
     return dataframe
 
 
-x = data_frame(48)
-with pd.option_context('display.max_rows', None, 'display.max_columns', None):  # more options can be specified also
-    print(x)
+# x = data_frame(48)
+# with pd.option_context('display.max_rows', None, 'display.max_columns', None):  # more options can be specified also
+#     print(x)
