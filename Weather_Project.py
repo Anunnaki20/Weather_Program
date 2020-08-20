@@ -2,7 +2,9 @@ import matplotlib.pyplot as plt
 import Data_Format_New as DF
 import readcsv as RC
 import pandas as pd
-import plotly as pl
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
+
 
 def plotting(dataframe, data_type):
     """
@@ -11,11 +13,11 @@ def plotting(dataframe, data_type):
     :param: data_type: A string unit of the type of data we want to graph. Can be 'Temperature', 'Pressure', 'Humidity'
     :return: None
     """
-    df = dataframe
+    df = dataframe[0]
     unit = {'Temperature': " (°C)", "Pressure": " (hPa)", "Humidity": ""}
     # First Sub plot
     fig, axes = plt.subplots(nrows=3, ncols=1, figsize=(15, 10))
-    df.plot(y="Actual", ax=axes[0])
+    df['Actual'].plot(ax=axes[0])
     df['Avg'][period:].plot(ax=axes[0])
     axes[0].legend(["Actual " + data_type, "Predicted" + data_type + " Using " + str(period) + " Hours"])
     axes[0].set_title(data_type + " readings over a whole month")
@@ -39,17 +41,54 @@ def plotting(dataframe, data_type):
     plt.show()
 
 
+def interactive_plots(dataframe, data_type):
+    """
+    To plot the temperature data with plotly
+    :param: dataframe: The dataframe produced by the data_from function in Data_Format_New
+    :param: data_type: A string unit of the type of data we want to graph. Can be 'Temperature', 'Pressure', 'Humidity'
+    :return: None
+    """
+    df = dataframe[0]
+    index = dataframe[1]
+    unit = {'Temperature': " (°C)", "Pressure": " (hPa)", "Humidity": ""}
+    pd.options.plotting.backend = "plotly"
+    # Makes the subplots
+    fig = make_subplots(rows=3, cols=1, subplot_titles=(data_type, "Min and Max " + data_type, "% Error"))
+    # Graphs all plots in the proper location
+    fig.add_trace(go.Scatter(x=index, y=df['Actual'], name="Actual " + data_type), row=1, col=1)
+    fig.add_trace(go.Scatter(x=index[period:], y=df['Avg'][period:], name='Average'), row=1, col=1)
+    fig.add_trace(go.Scatter(x=index[period:], y=df['Min'][period:], name="Min " + data_type), row=2, col=1)
+    fig.add_trace(go.Scatter(x=index[period:], y=df['Max'][period:], name='Max ' + data_type), row=2, col=1)
+    fig.add_trace(go.Scatter(x=index[period:],
+                             y=((abs(df['Avg'][period:] - df['Actual'][period:])/df['Actual'][period:]) * 100),
+                             name='% Error'),
+                  row=3, col=1)
+    # Updates the axis labels and sets the size of the graphs
+    fig.update_xaxes(title_text="Readings", row=1, col=1)
+    fig.update_xaxes(title_text="Readings", row=2, col=1)
+    fig.update_xaxes(title_text="Readings", row=3, col=1)
+    fig.update_yaxes(title_text=data_type + unit[data_type], row=1, col=1)
+    fig.update_yaxes(title_text=data_type + unit[data_type], row=2, col=1)
+    fig.update_yaxes(title_text='%Error', row=3, col=1)
+    fig.update_layout(height=800, title_text=data_type + " over a whole month using " + str(period) + " data")
+    fig.show()
+
+
 if __name__ == '__main__':
     weather = RC.read_weather()
     period = int(input("Enter the period will use to Predict future temperatures. Can choose between 24 or 48: "))
     # Plots temperature
-    # temp_data = DF.data_frame(period, weather, 'Temperature')
-    # plotting(temp_data, 'Temperature')
+    temp_data = DF.data_frame(period, weather, 'Temperature')
+    plotting(temp_data, 'Temperature')
     # Plots Pressure
-    # pressure_data = DF.data_frame(period, weather, 'Pressure')
-    # plotting(pressure_data, 'Pressure')
+    pressure_data = DF.data_frame(period, weather, 'Pressure')
+    plotting(pressure_data, 'Pressure')
     # Plots Humidity
     humidity_data = DF.data_frame(period, weather, 'Humidity')
     plotting(humidity_data, 'Humidity')
-    with pd.option_context('display.max_rows', None, 'display.max_columns', None):  # more options can be specified also
-        print(humidity_data)
+    temp_data = DF.data_frame(period, weather, 'Temperature')
+    interactive_plots(temp_data, 'Temperature')
+    pressure_data = DF.data_frame(period, weather, 'Pressure')
+    interactive_plots(pressure_data, 'Pressure')
+    humidity_data = DF.data_frame(period, weather, 'Humidity')
+    interactive_plots(humidity_data, 'Humidity')

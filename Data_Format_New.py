@@ -106,7 +106,7 @@ def data_frame(period, data, weathertype):
     :param: period: The period of time that we will take avg,min,max data
     :param: data: The weather data from the readcsv file
     :param: weathertype is what data you want in a data frame. Can be Temp, Pressure, Humidity
-    :return: The data frame with all the data organized
+    :return: The data frame with all the data organized and the list of the indexes
     """
     data_type = {'Temperature': 0, 'Pressure': 3, 'Humidity': 4}
     all_data = data  # All of the data that is read from the read_weather function in readcsv file
@@ -126,7 +126,7 @@ def data_frame(period, data, weathertype):
         dataframe_dict['Min'].append(volatility_data['Min'].pop(0))
         dataframe_dict['Max'].append(volatility_data['Max'].pop(0))
     dataframe = pd.DataFrame(dataframe_dict, axis_index)
-    return dataframe
+    return dataframe, axis_index
 
 
 # x = data_frame(48)
