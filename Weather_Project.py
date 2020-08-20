@@ -6,13 +6,14 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
 
-def plotting(dataframe, data_type):
+def plotting(dataframe, data_type,period):
     """
     To plot the temperature data
     :param: dataframe: The dataframe produced by the data_from function in Data_Format_New
     :param: data_type: A string unit of the type of data we want to graph. Can be 'Temperature', 'Pressure', 'Humidity'
     :return: None
     """
+    pd.options.plotting.backend = "matplotlib"
     df = dataframe[0]
     unit = {'Temperature': " (°C)", "Pressure": " (hPa)", "Humidity": ""}
     # First Sub plot
@@ -41,7 +42,7 @@ def plotting(dataframe, data_type):
     plt.show()
 
 
-def interactive_plots(dataframe, data_type):
+def interactive_plots(dataframe, data_type,period):
     """
     To plot the temperature data with plotly
     :param: dataframe: The dataframe produced by the data_from function in Data_Format_New
@@ -53,7 +54,7 @@ def interactive_plots(dataframe, data_type):
     unit = {'Temperature': " (°C)", "Pressure": " (hPa)", "Humidity": ""}
     pd.options.plotting.backend = "plotly"
     # Makes the subplots
-    fig = make_subplots(rows=3, cols=1, subplot_titles=(data_type, "Min and Max " + data_type, "% Error"))
+    fig = make_subplots(rows=4, cols=1, subplot_titles=(data_type, "Min and Max " + data_type, "% Error"))
     # Graphs all plots in the proper location
     fig.add_trace(go.Scatter(x=index, y=df['Actual'], name="Actual " + data_type), row=1, col=1)
     fig.add_trace(go.Scatter(x=index[period:], y=df['Avg'][period:], name='Average'), row=1, col=1)
@@ -70,25 +71,35 @@ def interactive_plots(dataframe, data_type):
     fig.update_yaxes(title_text=data_type + unit[data_type], row=1, col=1)
     fig.update_yaxes(title_text=data_type + unit[data_type], row=2, col=1)
     fig.update_yaxes(title_text='%Error', row=3, col=1)
-    fig.update_layout(height=800, title_text=data_type + " over a whole month using " + str(period) + " data")
+    fig.update_layout(height=900, title_text=data_type + " over a whole month using " + str(period) + " data")
     fig.show()
 
 
-if __name__ == '__main__':
-    weather = RC.read_weather()
+def main():
     period = int(input("Enter the period will use to Predict future temperatures. Can choose between 24 or 48: "))
+    while period != 24 and period != 48:
+        period = int(input("The period must be either 24 or 48: "))
     # Plots temperature
     temp_data = DF.data_frame(period, weather, 'Temperature')
-    plotting(temp_data, 'Temperature')
+    plotting(temp_data, 'Temperature', period)
     # Plots Pressure
     pressure_data = DF.data_frame(period, weather, 'Pressure')
-    plotting(pressure_data, 'Pressure')
+    plotting(pressure_data, 'Pressure', period)
     # Plots Humidity
     humidity_data = DF.data_frame(period, weather, 'Humidity')
-    plotting(humidity_data, 'Humidity')
+    plotting(humidity_data, 'Humidity', period)
+    # Plots the Interactive charts
     temp_data = DF.data_frame(period, weather, 'Temperature')
-    interactive_plots(temp_data, 'Temperature')
+    interactive_plots(temp_data, 'Temperature', period)
     pressure_data = DF.data_frame(period, weather, 'Pressure')
-    interactive_plots(pressure_data, 'Pressure')
+    interactive_plots(pressure_data, 'Pressure', period)
     humidity_data = DF.data_frame(period, weather, 'Humidity')
-    interactive_plots(humidity_data, 'Humidity')
+    interactive_plots(humidity_data, 'Humidity', period)
+
+
+if __name__ == '__main__':
+    exit_input = 'Y'
+    weather = RC.read_weather()
+    while exit_input != 'N':
+        main()
+        exit_input = str(input("Do you want to graph again? (Yes: Y, No: N): "))
