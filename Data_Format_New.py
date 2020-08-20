@@ -80,8 +80,8 @@ def volatility(sorted_dict, period):
             copy = sorted_dict[time]['48 hr temps'].copy()  # Copy's the 48 data
         while len(data) != 0:
             if len(data) < 24:  # Checks to make sure it can pop 24 values into the temporarily list
-                temporarily_list = data  # If it can't pop 24 values then it assigns the values to temporarily list
-                break   # Breaks the while loop so it can find the min, max, avg from the remaining values
+                temporarily_list = data[0:]  # If it can't pop 24 values then it assigns the values to temporarily list
+                data = []  # Sets the data to a length of 0
             else:
                 for i in range(0, 24):  # pops in 24 values from the data list
                     value = data.pop(0)
@@ -105,7 +105,7 @@ def data_frame(period, data, weathertype):
     The purpose is to put the data into a single panda data frame
     :param: period: The period of time that we will take avg,min,max data
     :param: data: The weather data from the readcsv file
-    :param: weather type is what data you want in a data frame. Can be Temp, Pressure, Humidity
+    :param: weathertype is what data you want in a data frame. Can be Temp, Pressure, Humidity
     :return: The data frame with all the data organized
     """
     data_type = {'Temperature': 0, 'Pressure': 3, 'Humidity': 4}
