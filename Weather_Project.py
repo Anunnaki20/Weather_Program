@@ -54,7 +54,7 @@ def interactive_plots(dataframe, data_type,period):
     unit = {'Temperature': " (°C)", "Pressure": " (hPa)", "Humidity": ""}
     pd.options.plotting.backend = "plotly"
     # Makes the subplots
-    fig = make_subplots(rows=4, cols=1, subplot_titles=(data_type, "Min and Max " + data_type, "% Error"))
+    fig = make_subplots(rows=3, cols=1, subplot_titles=(data_type, "Min and Max " + data_type, "% Error"))
     # Graphs all plots in the proper location
     fig.add_trace(go.Scatter(x=index, y=df['Actual'], name="Actual " + data_type), row=1, col=1)
     fig.add_trace(go.Scatter(x=index[period:], y=df['Avg'][period:], name='Average'), row=1, col=1)
@@ -71,7 +71,7 @@ def interactive_plots(dataframe, data_type,period):
     fig.update_yaxes(title_text=data_type + unit[data_type], row=1, col=1)
     fig.update_yaxes(title_text=data_type + unit[data_type], row=2, col=1)
     fig.update_yaxes(title_text='%Error', row=3, col=1)
-    fig.update_layout(height=900, title_text=data_type + " over a whole month using " + str(period) + " data")
+    fig.update_layout(height=800, title_text=data_type + " over a whole month using " + str(period) + " data")
     fig.show()
 
 
